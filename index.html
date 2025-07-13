@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>专业活动核销系统</title>
+    <title>专业活动核销系统 - 安卓优化版</title>
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
@@ -19,12 +20,25 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
         }
         
         .header {
             text-align: center;
             padding: 20px 0;
             margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.2rem;
+            color: #1a73e8;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            color: #5f6368;
+            font-size: 1.1rem;
         }
         
         .container {
@@ -35,18 +49,26 @@
         
         .card {
             background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
             overflow: hidden;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
         }
         
         .card-header {
-            background: #4285f4;
+            background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
             color: white;
-            padding: 15px 20px;
+            padding: 18px 25px;
             font-weight: 600;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .card-body {
@@ -58,15 +80,17 @@
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         #scanner {
             width: 100%;
             height: auto;
-            border: 2px solid #4285f4;
-            border-radius: 8px;
             display: block;
             background: black;
+            transform: scaleX(-1); /* 修复安卓前置摄像头镜像问题 */
         }
         
         .scanner-overlay {
@@ -78,70 +102,120 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             color: white;
             font-size: 1.2rem;
             text-align: center;
             flex-direction: column;
+            padding: 20px;
         }
         
         .btn {
             background: #4285f4;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 1rem;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            font-weight: 600;
             cursor: pointer;
             margin: 10px 5px;
             transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(66, 133, 244, 0.3);
         }
         
         .btn:hover {
             background: #3367d6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(66, 133, 244, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
         }
         
         .btn-scan {
-            background: #34a853;
+            background: linear-gradient(135deg, #34a853 0%, #2e8b57 100%);
+            box-shadow: 0 4px 6px rgba(52, 168, 83, 0.3);
+        }
+        
+        .btn-scan:hover {
+            background: linear-gradient(135deg, #2e8b57 0%, #2e8b57 100%);
+            box-shadow: 0 6px 8px rgba(52, 168, 83, 0.4);
         }
         
         .btn-manual {
-            background: #fbbc05;
+            background: linear-gradient(135deg, #fbbc05 0%, #f9ab00 100%);
+            box-shadow: 0 4px 6px rgba(251, 188, 5, 0.3);
+        }
+        
+        .btn-manual:hover {
+            background: linear-gradient(135deg, #f9ab00 0%, #f9ab00 100%);
+            box-shadow: 0 6px 8px rgba(251, 188, 5, 0.4);
         }
         
         .btn-stop {
-            background: #ea4335;
+            background: linear-gradient(135deg, #ea4335 0%, #d62d20 100%);
+            box-shadow: 0 4px 6px rgba(234, 67, 53, 0.3);
+        }
+        
+        .btn-stop:hover {
+            background: linear-gradient(135deg, #d62d20 0%, #d62d20 100%);
+            box-shadow: 0 6px 8px rgba(234, 67, 53, 0.4);
         }
         
         .manual-section {
             display: none;
-            margin-top: 20px;
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .manual-section h3 {
+            margin-bottom: 18px;
+            color: #1a73e8;
+            text-align: center;
         }
         
         input {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 1rem;
-            margin-bottom: 15px;
+            padding: 14px 18px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            margin-bottom: 18px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4285f4;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
         }
         
         .result-section {
             display: none;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         
         .success {
-            background: #e6f4ea;
+            background: linear-gradient(135deg, #e6f4ea 0%, #d1e8d2 100%);
             border: 1px solid #34a853;
             color: #137333;
         }
         
         .error {
-            background: #fce8e6;
+            background: linear-gradient(135deg, #fce8e6 0%, #fadbd8 100%);
             border: 1px solid #ea4335;
             color: #a50e0e;
         }
@@ -149,17 +223,17 @@
         .loading {
             display: none;
             text-align: center;
-            padding: 20px;
+            padding: 30px;
         }
         
         .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(0,0,0,0.1);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(66, 133, 244, 0.2);
             border-left-color: #4285f4;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 10px auto;
+            margin: 15px auto;
         }
         
         @keyframes spin {
@@ -169,30 +243,143 @@
         .action-buttons {
             display: flex;
             justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .device-info {
+            text-align: center;
+            padding: 15px;
+            background: #e8f0fe;
+            border-radius: 10px;
             margin-top: 20px;
+            font-size: 0.95rem;
+            color: #1a73e8;
+        }
+        
+        .instructions {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .instructions h3 {
+            margin-bottom: 15px;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+            text-align: left;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
         }
         
         @media (max-width: 768px) {
             .card-body {
-                padding: 15px;
+                padding: 18px;
             }
             
             .btn {
                 width: 100%;
-                margin: 5px 0;
+                margin: 8px 0;
+                padding: 16px;
             }
             
             .action-buttons {
                 flex-direction: column;
+                gap: 8px;
             }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+        }
+        
+        /* 安卓全屏模式支持 */
+        .scanner-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1000;
+            background: black;
+            max-width: none;
+            border-radius: 0;
+        }
+        
+        .scanner-container.fullscreen #scanner {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .scanner-container.fullscreen .scanner-overlay {
+            background: rgba(0,0,0,0.85);
+        }
+        
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+        
+        .scanner-guide {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            border: 2px solid #34a853;
+            border-radius: 12px;
+            z-index: 5;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>活动签到核销系统</h1>
-            <p>专业活动管理解决方案</p>
+            <h1><i class="fas fa-ticket-alt"></i> 活动签到核销系统</h1>
+            <p>安卓设备优化版 - 专业活动管理解决方案</p>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-lightbulb"></i> 使用说明</h3>
+            <ul>
+                <li><strong>扫码核销</strong>：点击"开始扫描"按钮启动摄像头，将二维码置于取景框内</li>
+                <li><strong>手动核销</strong>：如果无法使用摄像头，可点击"手动输入核销码"按钮</li>
+                <li><strong>全屏模式</strong>：扫码时点击视频区域可切换全屏模式</li>
+                <li><strong>安卓提示</strong>：首次使用请确保允许浏览器访问摄像头</li>
+            </ul>
         </div>
         
         <div class="card">
@@ -201,22 +388,34 @@
             </div>
             <div class="card-body">
                 <div class="scanner-container">
-                    <video id="scanner" playsinline></video>
+                    <video id="scanner" playsinline webkit-playsinline></video>
+                    <div class="scanner-guide"></div>
                     <div class="scanner-overlay" id="scannerOverlay">
                         <p>点击"开始扫描"按钮启动摄像头</p>
-                        <button class="btn btn-scan" id="startScanBtn">开始扫描</button>
+                        <button class="btn btn-scan" id="startScanBtn">
+                            <i class="fas fa-camera"></i> 开始扫描
+                        </button>
                     </div>
+                    <button class="fullscreen-btn" id="fullscreenBtn">
+                        <i class="fas fa-expand"></i>
+                    </button>
                 </div>
                 
                 <div class="action-buttons">
-                    <button class="btn btn-manual" id="manualBtn">手动输入核销码</button>
-                    <button class="btn btn-stop" id="stopScanBtn" style="display:none">停止扫描</button>
+                    <button class="btn btn-manual" id="manualBtn">
+                        <i class="fas fa-keyboard"></i> 手动输入核销码
+                    </button>
+                    <button class="btn btn-stop" id="stopScanBtn" style="display:none">
+                        <i class="fas fa-stop"></i> 停止扫描
+                    </button>
                 </div>
                 
                 <div class="manual-section" id="manualSection">
-                    <h3>手动核销</h3>
+                    <h3><i class="fas fa-pencil-alt"></i> 手动核销</h3>
                     <input type="text" id="guestId" placeholder="输入嘉宾核销码 (如: EV-ABC123)">
-                    <button class="btn" id="manualCheckBtn">提交核销</button>
+                    <button class="btn" id="manualCheckBtn">
+                        <i class="fas fa-check-circle"></i> 提交核销
+                    </button>
                 </div>
             </div>
         </div>
@@ -226,14 +425,25 @@
             <p>正在处理核销请求...</p>
         </div>
         
-        <div class="result-section" id="resultSuccess">
+        <div class="result-section success" id="resultSuccess">
             <h2><i class="fas fa-check-circle"></i> 签到成功!</h2>
             <div id="successDetails"></div>
+            <button class="btn btn-scan" id="scanAgainBtn" style="margin-top:20px">
+                <i class="fas fa-redo"></i> 继续扫描
+            </button>
         </div>
         
-        <div class="result-section" id="resultError">
+        <div class="result-section error" id="resultError">
             <h2><i class="fas fa-times-circle"></i> 核销失败</h2>
             <p id="errorDetails"></p>
+            <button class="btn" id="retryBtn" style="margin-top:20px">
+                <i class="fas fa-redo"></i> 重试
+            </button>
+        </div>
+        
+        <div class="device-info">
+            <p><i class="fas fa-mobile-alt"></i> 当前设备: 安卓 | 浏览器: <span id="browserInfo"></span></p>
+            <p id="cameraStatus">摄像头状态: 待启动</p>
         </div>
     </div>
 
@@ -244,6 +454,7 @@
         // 获取DOM元素
         const videoElement = document.getElementById('scanner');
         const scannerOverlay = document.getElementById('scannerOverlay');
+        const scannerContainer = document.querySelector('.scanner-container');
         const startScanBtn = document.getElementById('startScanBtn');
         const stopScanBtn = document.getElementById('stopScanBtn');
         const manualBtn = document.getElementById('manualBtn');
@@ -255,20 +466,79 @@
         const resultError = document.getElementById('resultError');
         const successDetails = document.getElementById('successDetails');
         const errorDetails = document.getElementById('errorDetails');
+        const scanAgainBtn = document.getElementById('scanAgainBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const cameraStatus = document.getElementById('cameraStatus');
+        const browserInfo = document.getElementById('browserInfo');
         
         // 变量
         let scanning = false;
-        let scannerInterval;
+        let scannerAnimationFrame;
+        let currentStream = null;
+        let isFullscreen = false;
+        
+        // 检测浏览器信息
+        function detectBrowser() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Chrome')) return 'Chrome';
+            if (userAgent.includes('Firefox')) return 'Firefox';
+            if (userAgent.includes('Safari')) return 'Safari';
+            if (userAgent.includes('Edge')) return 'Edge';
+            return '未知浏览器';
+        }
+        
+        // 更新设备信息
+        browserInfo.textContent = detectBrowser();
         
         // 启动摄像头扫描
         async function startScanning() {
             try {
+                // 显示加载状态
+                scannerOverlay.innerHTML = '<div class="spinner"></div><p>正在启动摄像头...</p>';
+                cameraStatus.textContent = '摄像头状态: 正在启动...';
+                
+                // 停止现有流（如果有）
+                if (currentStream) {
+                    stopScanning();
+                }
+                
+                // 安卓设备优化配置
+                const constraints = {
+                    video: {
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: { exact: "environment" } // 优先使用后置摄像头
+                    }
+                };
+                
                 // 请求摄像头权限
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints)
+                    .catch(async (error) => {
+                        // 如果后置摄像头失败，尝试前置
+                        console.warn("后置摄像头访问失败，尝试前置摄像头:", error);
+                        cameraStatus.textContent = '摄像头状态: 尝试前置摄像头...';
+                        return navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: "user" }
+                        });
+                    });
+                
+                // 应用视频流
+                videoElement.srcObject = currentStream;
+                cameraStatus.textContent = '摄像头状态: 已连接';
+                
+                // 安卓关键修复：等待视频元数据加载
+                await new Promise((resolve) => {
+                    videoElement.onloadedmetadata = resolve;
                 });
                 
-                videoElement.srcObject = stream;
+                // 强制播放视频（安卓需要）
+                await videoElement.play().catch(error => {
+                    console.error("视频播放失败:", error);
+                    handleCameraError(error);
+                });
+                
+                // 更新UI
                 scannerOverlay.style.display = 'none';
                 stopScanBtn.style.display = 'inline-block';
                 startScanBtn.style.display = 'none';
@@ -276,45 +546,119 @@
                 
                 scanning = true;
                 
-                // 设置画布用于二维码扫描
-                const canvasElement = document.createElement('canvas');
-                const canvas = canvasElement.getContext('2d');
+                // 开始二维码扫描
+                startQRScanner();
                 
-                // 开始扫描循环
-                scannerInterval = setInterval(() => {
-                    if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
-                        canvasElement.height = videoElement.videoHeight;
+            } catch (error) {
+                console.error("摄像头初始化错误:", error);
+                handleCameraError(error);
+            }
+        }
+        
+        // 新的二维码扫描逻辑
+        function startQRScanner() {
+            const canvasElement = document.createElement('canvas');
+            const canvas = canvasElement.getContext('2d');
+            
+            function scan() {
+                if (!scanning) return;
+                
+                try {
+                    // 确保视频已准备好
+                    if (videoElement.readyState >= videoElement.HAVE_METADATA) {
+                        // 设置画布尺寸
                         canvasElement.width = videoElement.videoWidth;
+                        canvasElement.height = videoElement.videoHeight;
+                        
+                        // 绘制当前帧
                         canvas.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
                         
+                        // 扫描二维码
                         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
                         const code = jsQR(imageData.data, imageData.width, imageData.height);
                         
                         if (code) {
-                            // 找到二维码，处理核销
                             processCheckIn(code.data);
+                            return;
                         }
                     }
-                }, 300);
+                } catch (e) {
+                    console.error("扫描错误:", e);
+                }
                 
-            } catch (error) {
-                alert(`无法访问摄像头: ${error.message}`);
-                scannerOverlay.innerHTML = `<p>无法访问摄像头，请使用手动输入</p>`;
+                scannerAnimationFrame = requestAnimationFrame(scan);
             }
+            
+            scan();
         }
         
-        // 停止扫描
-        function stopScanning() {
-            if (videoElement.srcObject) {
-                videoElement.srcObject.getTracks().forEach(track => track.stop());
+        // 处理摄像头错误
+        function handleCameraError(error) {
+            console.error("摄像头错误:", error);
+            cameraStatus.textContent = '摄像头状态: 错误';
+            cameraStatus.style.color = '#ea4335';
+            
+            let errorMessage = "无法访问摄像头";
+            
+            if (error.name === 'NotAllowedError') {
+                errorMessage = "摄像头权限被拒绝，请在浏览器设置中允许访问";
+            } else if (error.name === 'NotFoundError') {
+                errorMessage = "未找到可用摄像头";
+            } else if (error.name === 'NotReadableError') {
+                errorMessage = "摄像头被其他应用占用";
+            } else if (error.name === 'OverconstrainedError') {
+                errorMessage = "请求的摄像头配置不被支持";
             }
             
-            clearInterval(scannerInterval);
+            scannerOverlay.innerHTML = `
+                <p style="color:#ea4335; margin-bottom:15px; font-weight:600">${errorMessage}</p>
+                <p>请尝试：</p>
+                <ul style="text-align:left; margin:10px 0 20px; padding-left:20px;">
+                    <li>检查浏览器摄像头权限</li>
+                    <li>重启浏览器或设备</li>
+                    <li>尝试手动输入核销码</li>
+                    <li>更换其他浏览器（推荐Chrome）</li>
+                </ul>
+                <button class="btn btn-scan" onclick="startScanning()">
+                    <i class="fas fa-redo"></i> 重试
+                </button>
+            `;
+        }
+        
+        // 停止扫描（优化资源释放）
+        function stopScanning() {
             scanning = false;
+            cameraStatus.textContent = '摄像头状态: 已停止';
             
+            // 停止扫描循环
+            if (scannerAnimationFrame) {
+                cancelAnimationFrame(scannerAnimationFrame);
+            }
+            
+            // 释放摄像头资源
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                currentStream = null;
+            }
+            
+            // 重置视频元素
+            videoElement.srcObject = null;
+            
+            // 恢复UI状态
             scannerOverlay.style.display = 'flex';
             stopScanBtn.style.display = 'none';
             startScanBtn.style.display = 'inline-block';
+            
+            // 重置提示信息
+            scannerOverlay.innerHTML = `
+                <p>点击"开始扫描"按钮启动摄像头</p>
+                <button class="btn btn-scan" id="startScanBtn">
+                    <i class="fas fa-camera"></i> 开始扫描
+                </button>
+            `;
+            document.getElementById('startScanBtn').addEventListener('click', startScanning);
         }
         
         // 处理核销
@@ -335,9 +679,10 @@
                 if (result.status === "success") {
                     // 显示成功结果
                     successDetails.innerHTML = `
-                        <p><strong>姓名:</strong> ${result.guestName}</p>
-                        <p><strong>机构:</strong> ${result.institution || '未提供'}</p>
-                        <p><strong>核销时间:</strong> ${result.checkTime}</p>
+                        <p><strong>核销码:</strong> ${uniqueId}</p>
+                        <p><strong>姓名:</strong> ${result.Fullame}</p>
+                        <p><strong>机构:</strong> ${result.Institution || '未提供'}</p>
+                        <p><strong>核销时间:</strong> ${new Date().toLocaleString()}</p>
                     `;
                     resultSuccess.style.display = 'block';
                 } else {
@@ -355,19 +700,35 @@
         
         // 手动核销
         function manualCheckIn() {
-            const guestId = guestIdInput.value.trim();
-            if (!guestId) {
+            const uniqueId = uniqueIdInput.value.trim();
+            if (!uniqueId) {
                 alert("请输入核销码");
                 return;
             }
             
-            processCheckIn(guestId);
+            processCheckIn(uniqueId);
         }
         
         // 切换手动输入
         function toggleManualInput() {
             if (scanning) stopScanning();
             manualSection.style.display = 'block';
+            uniqueIdInput.focus();
+        }
+        
+        // 切换全屏模式
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                scannerContainer.classList.add('fullscreen');
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`全屏模式错误: ${err.message}`);
+                });
+                isFullscreen = true;
+            } else {
+                document.exitFullscreen();
+                scannerContainer.classList.remove('fullscreen');
+                isFullscreen = false;
+            }
         }
         
         // 绑定事件
@@ -375,12 +736,29 @@
         stopScanBtn.addEventListener('click', stopScanning);
         manualBtn.addEventListener('click', toggleManualInput);
         manualCheckBtn.addEventListener('click', manualCheckIn);
+        scanAgainBtn.addEventListener('click', startScanning);
+        retryBtn.addEventListener('click', () => {
+            resultError.style.display = 'none';
+        });
         guestIdInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') manualCheckIn();
         });
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+        scannerContainer.addEventListener('click', toggleFullscreen);
+        
+        // 添加安卓设备检测
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        if (isAndroid) {
+            // 安卓特有初始化
+            videoElement.setAttribute('playsinline', 'true');
+            videoElement.setAttribute('webkit-playsinline', 'true');
+            document.querySelector('.device-info p:first-child').textContent += ' | 系统: 安卓';
+        } else {
+            document.querySelector('.device-info p:first-child').textContent += ' | 系统: 非安卓';
+        }
         
         // 初始化
-        stopScanning();
+        cameraStatus.textContent = '摄像头状态: 待启动';
     </script>
 </body>
 </html>
