@@ -679,7 +679,7 @@
                 if (result.status === "success") {
                     // 显示成功结果
                     successDetails.innerHTML = `
-                        <p><strong>核销码:</strong> ${uniqueId}</p>
+                        <p><strong>核销码:</strong> ${UniqueId}</p>
                         <p><strong>姓名:</strong> ${result.Fullame}</p>
                         <p><strong>机构:</strong> ${result.Institution || '未提供'}</p>
                         <p><strong>核销时间:</strong> ${new Date().toLocaleString()}</p>
@@ -700,8 +700,8 @@
         
         // 手动核销
         function manualCheckIn() {
-            const uniqueId = uniqueIdInput.value.trim();
-            if (!uniqueId) {
+            const UniqueId = UniqueIdInput.value.trim();
+            if (!UniqueId) {
                 alert("请输入核销码");
                 return;
             }
@@ -713,7 +713,7 @@
         function toggleManualInput() {
             if (scanning) stopScanning();
             manualSection.style.display = 'block';
-            uniqueIdInput.focus();
+            UniqueIdInput.focus();
         }
         
         // 切换全屏模式
@@ -740,7 +740,7 @@
         retryBtn.addEventListener('click', () => {
             resultError.style.display = 'none';
         });
-        guestIdInput.addEventListener('keypress', (e) => {
+        uniqueIdInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') manualCheckIn();
         });
         fullscreenBtn.addEventListener('click', toggleFullscreen);
