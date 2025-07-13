@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>活动签到核销系统</title>
+    <title>活动核销系统 - 清华大学</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
             margin: 0;
             padding: 20px;
+            text-align: center;
         }
         .card {
             background: white;
@@ -25,88 +25,85 @@
             width: 500px;
         }
         h1 {
-            color: #2d3748;
+            color: #d42323; /* 清华红 */
             margin-bottom: 20px;
         }
         .qr-container {
             margin: 25px 0;
             padding: 20px;
-            background: #f8fafc;
+            background: #f8f9fa;
             border-radius: 12px;
         }
-        .instruction {
-            margin: 25px 0;
-            color: #4a5568;
-            line-height: 1.6;
+        .manual-box {
+            margin-top: 30px;
+            border-top: 1px dashed #ddd;
+            padding-top: 20px;
         }
-        .manual-input {
-            margin: 20px 0;
+        input, button {
+            padding: 12px 15px;
+            font-size: 16px;
+            border-radius: 8px;
         }
         input {
-            padding: 12px 15px;
             width: 100%;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 16px;
+            border: 1px solid #ddd;
             margin-bottom: 15px;
         }
         button {
-            background: #4299e1;
+            background: #d42323;
             color: white;
             border: none;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-size: 16px;
+            width: 100%;
             cursor: pointer;
             transition: all 0.3s;
         }
         button:hover {
-            background: #3182ce;
+            background: #b21f1f;
         }
-        .error-message {
+        .error {
             color: #e53e3e;
-            margin-top: 15px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>活动签到核销</h1>
+        <img src="https://www.tsinghua.edu.cn/__local/B/2B/CE/EA427FC3D2142BA0E6A2B5C6C90_9B11C834_19EA8.png" 
+             alt="清华大学校徽" width="80" style="margin-bottom: 20px;">
         
-        <div class="instruction">
-            <p>请使用手机相机扫描下方二维码，或手动输入ID完成核销</p>
-        </div>
+        <h1>活动签到核销系统</h1>
         
         <div class="qr-container">
-            <!-- 核销系统二维码 -->
+            <p>请使用手机相机扫描二维码</p>
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://script.google.com/macros/s/AKfycbxbpZ3JTJmHkE6Oh-np2eRcVlLZKZkhyw0-xLVb3o0elE7sBW1S5EYEj2BleIqxC8_q/exec" 
-                 alt="核销系统二维码"
-                 width="200" height="200">
+                 width="200" alt="核销系统二维码">
         </div>
         
-        <div class="manual-input">
-            <h3>手动核销</h3>
-            <input type="text" id="guestId" placeholder="输入嘉宾ID (如: EV-ABC123)">
-            <button onclick="checkInManually()">提交核销</button>
-            <p id="errorMessage" class="error-message"></p>
+        <div class="manual-box">
+            <h3>或手动输入核销码</h3>
+            <input type="text" id="guestId" placeholder="输入核销码 (如: EV-ABC123)">
+            <button onclick="checkIn()">立即核销</button>
+            <p id="errorMsg" class="error"></p>
         </div>
     </div>
 
     <script>
-        function checkInManually() {
+        function checkIn() {
             const guestId = document.getElementById('guestId').value.trim();
-            const errorElement = document.getElementById('errorMessage');
+            const errorEl = document.getElementById('errorMsg');
             
             if (!guestId) {
-                errorElement.textContent = "请输入有效的嘉宾ID";
+                errorEl.textContent = "请输入有效的核销码";
                 return;
             }
             
-            errorElement.textContent = "";
+            errorEl.textContent = "";
             
-            // 使用移动端优化URL格式
+            // 使用移动端优化URL（关键修改点）
             const mobileUrl = `https://script.googleusercontent.com/macros/echo?user_content_key=AKfycbxbpZ3JTJmHkE6Oh-np2eRcVlLZKZkhyw0-xLVb3o0elE7sBW1S5EYEj2BleIqxC8_q&id=${guestId}`;
-            window.location.href = mobileUrl;
+            
+            // 新窗口打开避免被拦截
+            window.open(mobileUrl, '_blank');
         }
     </script>
 </body>
