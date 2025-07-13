@@ -3,257 +3,384 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>活动签到核销系统</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>专业活动核销系统</title>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
-        :root {
-            --primary: #4285f4;
-            --primary-dark: #3367d6;
-            --success: #34a853;
-            --danger: #ea4335;
-        }
-        body {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            min-height: 100vh;
-            padding: 20px;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
         }
+        
+        body {
+            background: #f0f2f5;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
         .header {
             text-align: center;
-            padding: 30px 0;
-            margin-bottom: 30px;
+            padding: 20px 0;
+            margin-bottom: 20px;
         }
-        .logo {
-            width: 80px;
-            margin-bottom: 15px;
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
         }
+        
         .card {
-            border-radius: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             overflow: hidden;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-            border: none;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
+        
         .card-header {
-            background: var(--primary);
+            background: #4285f4;
             color: white;
-            font-weight: 600;
             padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.2rem;
         }
-        .qr-section {
+        
+        .card-body {
             padding: 25px;
+        }
+        
+        .scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        #scanner {
+            width: 100%;
+            height: auto;
+            border: 2px solid #4285f4;
+            border-radius: 8px;
+            display: block;
+            background: black;
+        }
+        
+        .scanner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            font-size: 1.2rem;
             text-align: center;
-            background: #f8f9fa;
+            flex-direction: column;
         }
-        .manual-section {
-            padding: 25px;
-        }
-        .result-container {
-            display: none;
-            padding: 25px;
-            text-align: center;
-        }
-        .btn-primary {
-            background: var(--primary);
+        
+        .btn {
+            background: #4285f4;
+            color: white;
             border: none;
             padding: 12px 24px;
-            font-weight: 500;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s;
         }
-        .btn-primary:hover {
-            background: var(--primary-dark);
+        
+        .btn:hover {
+            background: #3367d6;
         }
-        .success-bg {
-            background: #d4edda;
-            color: #155724;
+        
+        .btn-scan {
+            background: #34a853;
         }
-        .error-bg {
-            background: #f8d7da;
-            color: #721c24;
+        
+        .btn-manual {
+            background: #fbbc05;
         }
-        .spinner {
-            width: 3rem;
-            height: 3rem;
-            margin: 20px auto;
+        
+        .btn-stop {
+            background: #ea4335;
+        }
+        
+        .manual-section {
             display: none;
+            margin-top: 20px;
         }
-        .event-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .event-date {
-            color: #6c757d;
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
             margin-bottom: 15px;
+        }
+        
+        .result-section {
+            display: none;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .success {
+            background: #e6f4ea;
+            border: 1px solid #34a853;
+            color: #137333;
+        }
+        
+        .error {
+            background: #fce8e6;
+            border: 1px solid #ea4335;
+            color: #a50e0e;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0,0,0,0.1);
+            border-left-color: #4285f4;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 15px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <!-- 通用活动LOGO -->
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNDI4NWY0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzQyODVmNCIvPjxwYXRoIGQ9Ik0xMiAybDEwIDEwTDEyIDIyIDIgMTJ6IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==" 
-                 alt="活动LOGO" class="logo">
-            <div class="event-name">活动签到核销系统</div>
-            <div class="event-date" id="eventDate"></div>
+            <h1>活动签到核销系统</h1>
+            <p>专业活动管理解决方案</p>
         </div>
         
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-qrcode me-2"></i>二维码核销
+                <i class="fas fa-camera"></i> 扫码核销
             </div>
-            <div class="qr-section">
-                <p class="mb-3">请使用手机相机扫描下方二维码</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SCAN_ME" 
-                     class="img-fluid mb-3" 
-                     alt="核销二维码">
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle me-2"></i>扫描后直接进入核销页面
+            <div class="card-body">
+                <div class="scanner-container">
+                    <video id="scanner" playsinline></video>
+                    <div class="scanner-overlay" id="scannerOverlay">
+                        <p>点击"开始扫描"按钮启动摄像头</p>
+                        <button class="btn btn-scan" id="startScanBtn">开始扫描</button>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-manual" id="manualBtn">手动输入核销码</button>
+                    <button class="btn btn-stop" id="stopScanBtn" style="display:none">停止扫描</button>
+                </div>
+                
+                <div class="manual-section" id="manualSection">
+                    <h3>手动核销</h3>
+                    <input type="text" id="guestId" placeholder="输入嘉宾核销码 (如: EV-ABC123)">
+                    <button class="btn" id="manualCheckBtn">提交核销</button>
                 </div>
             </div>
         </div>
         
-        <div class="card">
-            <div class="card-header">
-                <i class="fas fa-keyboard me-2"></i>手动核销
-            </div>
-            <div class="manual-section">
-                <div class="mb-3">
-                    <label class="form-label">输入嘉宾核销码</label>
-                    <input type="text" id="guestId" class="form-control form-control-lg" 
-                           placeholder="例如: EV-ABC123">
-                </div>
-                <button id="checkinBtn" class="btn btn-primary w-100">
-                    <i class="fas fa-check-circle me-2"></i>立即核销
-                </button>
-                <div class="spinner-border text-primary spinner" role="status">
-                    <span class="visually-hidden">加载中...</span>
-                </div>
-                <div id="errorMsg" class="alert alert-danger mt-3 d-none"></div>
-            </div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>正在处理核销请求...</p>
         </div>
         
-        <div class="card result-container" id="resultCard">
-            <div class="card-header">
-                核销结果
-            </div>
-            <div class="result-section" id="resultContent">
-                <!-- 结果动态显示 -->
-            </div>
+        <div class="result-section" id="resultSuccess">
+            <h2><i class="fas fa-check-circle"></i> 签到成功!</h2>
+            <div id="successDetails"></div>
+        </div>
+        
+        <div class="result-section" id="resultError">
+            <h2><i class="fas fa-times-circle"></i> 核销失败</h2>
+            <p id="errorDetails"></p>
         </div>
     </div>
-    
+
     <script>
-        // 设置活动日期（示例）
-        document.getElementById('eventDate').textContent = new Date().toLocaleDateString('zh-CN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }) + " 活动";
+        // 配置
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxbpZ3JTJmHkE6Oh-np2eRcVlLZKZkhyw0-xLVb3o0elE7sBW1S5EYEj2BleIqxC8_q/exec';
         
         // 获取DOM元素
+        const videoElement = document.getElementById('scanner');
+        const scannerOverlay = document.getElementById('scannerOverlay');
+        const startScanBtn = document.getElementById('startScanBtn');
+        const stopScanBtn = document.getElementById('stopScanBtn');
+        const manualBtn = document.getElementById('manualBtn');
+        const manualSection = document.getElementById('manualSection');
+        const manualCheckBtn = document.getElementById('manualCheckBtn');
         const guestIdInput = document.getElementById('guestId');
-        const checkinBtn = document.getElementById('checkinBtn');
-        const errorMsg = document.getElementById('errorMsg');
-        const resultCard = document.getElementById('resultCard');
-        const resultContent = document.getElementById('resultContent');
-        const spinner = document.querySelector('.spinner');
+        const loadingElement = document.getElementById('loading');
+        const resultSuccess = document.getElementById('resultSuccess');
+        const resultError = document.getElementById('resultError');
+        const successDetails = document.getElementById('successDetails');
+        const errorDetails = document.getElementById('errorDetails');
         
-        // 核销函数
-        async function checkIn() {
-            const guestId = guestIdInput.value.trim();
+        // 变量
+        let scanning = false;
+        let scannerInterval;
+        
+        // 启动摄像头扫描
+        async function startScanning() {
+            try {
+                // 请求摄像头权限
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: "environment" }
+                });
+                
+                videoElement.srcObject = stream;
+                scannerOverlay.style.display = 'none';
+                stopScanBtn.style.display = 'inline-block';
+                startScanBtn.style.display = 'none';
+                manualSection.style.display = 'none';
+                
+                scanning = true;
+                
+                // 设置画布用于二维码扫描
+                const canvasElement = document.createElement('canvas');
+                const canvas = canvasElement.getContext('2d');
+                
+                // 开始扫描循环
+                scannerInterval = setInterval(() => {
+                    if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
+                        canvasElement.height = videoElement.videoHeight;
+                        canvasElement.width = videoElement.videoWidth;
+                        canvas.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+                        
+                        const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+                        const code = jsQR(imageData.data, imageData.width, imageData.height);
+                        
+                        if (code) {
+                            // 找到二维码，处理核销
+                            processCheckIn(code.data);
+                        }
+                    }
+                }, 300);
+                
+            } catch (error) {
+                alert(`无法访问摄像头: ${error.message}`);
+                scannerOverlay.innerHTML = `<p>无法访问摄像头，请使用手动输入</p>`;
+            }
+        }
+        
+        // 停止扫描
+        function stopScanning() {
+            if (videoElement.srcObject) {
+                videoElement.srcObject.getTracks().forEach(track => track.stop());
+            }
             
+            clearInterval(scannerInterval);
+            scanning = false;
+            
+            scannerOverlay.style.display = 'flex';
+            stopScanBtn.style.display = 'none';
+            startScanBtn.style.display = 'inline-block';
+        }
+        
+        // 处理核销
+        async function processCheckIn(guestId) {
+            // 停止扫描
+            stopScanning();
+            
+            // 显示加载状态
+            loadingElement.style.display = 'block';
+            resultSuccess.style.display = 'none';
+            resultError.style.display = 'none';
+            
+            try {
+                // 调用Google Script API
+                const response = await fetch(`${API_URL}?id=${encodeURIComponent(guestId)}`);
+                const result = await response.json();
+                
+                if (result.status === "success") {
+                    // 显示成功结果
+                    successDetails.innerHTML = `
+                        <p><strong>姓名:</strong> ${result.guestName}</p>
+                        <p><strong>机构:</strong> ${result.institution || '未提供'}</p>
+                        <p><strong>核销时间:</strong> ${result.checkTime}</p>
+                    `;
+                    resultSuccess.style.display = 'block';
+                } else {
+                    // 显示错误信息
+                    errorDetails.textContent = result.message;
+                    resultError.style.display = 'block';
+                }
+            } catch (error) {
+                errorDetails.textContent = `网络错误: ${error.message}`;
+                resultError.style.display = 'block';
+            } finally {
+                loadingElement.style.display = 'none';
+            }
+        }
+        
+        // 手动核销
+        function manualCheckIn() {
+            const guestId = guestIdInput.value.trim();
             if (!guestId) {
-                showError("请输入有效的核销码");
+                alert("请输入核销码");
                 return;
             }
             
-            try {
-                // 显示加载状态
-                checkinBtn.disabled = true;
-                spinner.style.display = 'block';
-                errorMsg.classList.add('d-none');
-                
-                // 实际使用中替换为真实API调用
-                const result = await verifyCheckIn(guestId);
-                
-                // 显示结果
-                showResult(result);
-                
-            } catch (error) {
-                showError(`核销失败: ${error.message}`);
-            } finally {
-                checkinBtn.disabled = false;
-                spinner.style.display = 'none';
-            }
+            processCheckIn(guestId);
         }
         
-        // 模拟验证函数（实际使用时替换）
-        async function verifyCheckIn(guestId) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve({
-                        success: true,
-                        guestName: "张三",
-                        institution: "示例公司",
-                        time: new Date().toLocaleTimeString('zh-CN')
-                    });
-                }, 1500);
-            });
-        }
-        
-        // 显示错误信息
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorMsg.classList.remove('d-none');
-            resultCard.style.display = 'none';
-        }
-        
-        // 显示核销结果
-        function showResult(result) {
-            resultCard.style.display = 'block';
-            
-            if (result.success) {
-                resultContent.className = 'result-section success-bg p-4';
-                resultContent.innerHTML = `
-                    <h2 class="text-success mb-4"><i class="fas fa-check-circle me-2"></i>签到成功!</h2>
-                    <div class="result-details">
-                        <p><strong>姓名:</strong> ${result.guestName}</p>
-                        ${result.institution ? `<p><strong>机构:</strong> ${result.institution}</p>` : ''}
-                        <p><strong>签到时间:</strong> ${result.time}</p>
-                    </div>
-                    <button class="btn btn-outline-success mt-3" onclick="resetForm()">
-                        <i class="fas fa-redo me-2"></i>继续核销
-                    </button>
-                `;
-            } else {
-                resultContent.className = 'result-section error-bg p-4';
-                resultContent.innerHTML = `
-                    <h2 class="text-danger mb-4"><i class="fas fa-times-circle me-2"></i>${result.message}</h2>
-                    ${result.time ? `<p>首次签到时间: ${result.time}</p>` : ''}
-                    <button class="btn btn-outline-danger mt-3" onclick="resetForm()">
-                        <i class="fas fa-redo me-2"></i>重新尝试
-                    </button>
-                `;
-            }
-        }
-        
-        // 重置表单
-        function resetForm() {
-            guestIdInput.value = '';
-            resultCard.style.display = 'none';
-            errorMsg.classList.add('d-none');
-            guestIdInput.focus();
+        // 切换手动输入
+        function toggleManualInput() {
+            if (scanning) stopScanning();
+            manualSection.style.display = 'block';
         }
         
         // 绑定事件
-        checkinBtn.addEventListener('click', checkIn);
+        startScanBtn.addEventListener('click', startScanning);
+        stopScanBtn.addEventListener('click', stopScanning);
+        manualBtn.addEventListener('click', toggleManualInput);
+        manualCheckBtn.addEventListener('click', manualCheckIn);
         guestIdInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkIn();
+            if (e.key === 'Enter') manualCheckIn();
         });
         
         // 初始化
-        resetForm();
+        stopScanning();
     </script>
 </body>
 </html>
