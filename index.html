@@ -3,108 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>活动核销系统 - 清华大学</title>
+    <title>活动签到核销系统</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #4285f4;
+            --primary-dark: #3367d6;
+            --success: #34a853;
+            --danger: #ea4335;
+        }
         body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
             font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 20px;
+        }
+        .header {
             text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
         }
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            max-width: 100%;
-            width: 500px;
-        }
-        h1 {
-            color: #d42323; /* 清华红 */
-            margin-bottom: 20px;
-        }
-        .qr-container {
-            margin: 25px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 12px;
-        }
-        .manual-box {
-            margin-top: 30px;
-            border-top: 1px dashed #ddd;
-            padding-top: 20px;
-        }
-        input, button {
-            padding: 12px 15px;
-            font-size: 16px;
-            border-radius: 8px;
-        }
-        input {
-            width: 100%;
-            border: 1px solid #ddd;
+        .logo {
+            width: 80px;
             margin-bottom: 15px;
         }
-        button {
-            background: #d42323;
-            color: white;
+        .card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
             border: none;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s;
+            margin-bottom: 25px;
         }
-        button:hover {
-            background: #b21f1f;
+        .card-header {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            padding: 15px 20px;
         }
-        .error {
-            color: #e53e3e;
-            margin-top: 10px;
+        .qr-section {
+            padding: 25px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .manual-section {
+            padding: 25px;
+        }
+        .result-container {
+            display: none;
+            padding: 25px;
+            text-align: center;
+        }
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            padding: 12px 24px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .success-bg {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error-bg {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            margin: 20px auto;
+            display: none;
+        }
+        .event-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .event-date {
+            color: #6c757d;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <img src="https://www.tsinghua.edu.cn/__local/B/2B/CE/EA427FC3D2142BA0E6A2B5C6C90_9B11C834_19EA8.png" 
-             alt="清华大学校徽" width="80" style="margin-bottom: 20px;">
-        
-        <h1>活动签到核销系统</h1>
-        
-        <div class="qr-container">
-            <p>请使用手机相机扫描二维码</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://script.google.com/macros/s/AKfycbxbpZ3JTJmHkE6Oh-np2eRcVlLZKZkhyw0-xLVb3o0elE7sBW1S5EYEj2BleIqxC8_q/exec" 
-                 width="200" alt="核销系统二维码">
+    <div class="container">
+        <div class="header">
+            <!-- 通用活动LOGO -->
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjNDI4NWY0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzQyODVmNCIvPjxwYXRoIGQ9Ik0xMiAybDEwIDEwTDEyIDIyIDIgMTJ6IiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==" 
+                 alt="活动LOGO" class="logo">
+            <div class="event-name">活动签到核销系统</div>
+            <div class="event-date" id="eventDate"></div>
         </div>
         
-        <div class="manual-box">
-            <h3>或手动输入核销码</h3>
-            <input type="text" id="guestId" placeholder="输入核销码 (如: EV-ABC123)">
-            <button onclick="checkIn()">立即核销</button>
-            <p id="errorMsg" class="error"></p>
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-qrcode me-2"></i>二维码核销
+            </div>
+            <div class="qr-section">
+                <p class="mb-3">请使用手机相机扫描下方二维码</p>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=SCAN_ME" 
+                     class="img-fluid mb-3" 
+                     alt="核销二维码">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>扫描后直接进入核销页面
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-keyboard me-2"></i>手动核销
+            </div>
+            <div class="manual-section">
+                <div class="mb-3">
+                    <label class="form-label">输入嘉宾核销码</label>
+                    <input type="text" id="guestId" class="form-control form-control-lg" 
+                           placeholder="例如: EV-ABC123">
+                </div>
+                <button id="checkinBtn" class="btn btn-primary w-100">
+                    <i class="fas fa-check-circle me-2"></i>立即核销
+                </button>
+                <div class="spinner-border text-primary spinner" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+                <div id="errorMsg" class="alert alert-danger mt-3 d-none"></div>
+            </div>
+        </div>
+        
+        <div class="card result-container" id="resultCard">
+            <div class="card-header">
+                核销结果
+            </div>
+            <div class="result-section" id="resultContent">
+                <!-- 结果动态显示 -->
+            </div>
         </div>
     </div>
-
+    
     <script>
-        function checkIn() {
-            const guestId = document.getElementById('guestId').value.trim();
-            const errorEl = document.getElementById('errorMsg');
+        // 设置活动日期（示例）
+        document.getElementById('eventDate').textContent = new Date().toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) + " 活动";
+        
+        // 获取DOM元素
+        const guestIdInput = document.getElementById('guestId');
+        const checkinBtn = document.getElementById('checkinBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const resultCard = document.getElementById('resultCard');
+        const resultContent = document.getElementById('resultContent');
+        const spinner = document.querySelector('.spinner');
+        
+        // 核销函数
+        async function checkIn() {
+            const guestId = guestIdInput.value.trim();
             
             if (!guestId) {
-                errorEl.textContent = "请输入有效的核销码";
+                showError("请输入有效的核销码");
                 return;
             }
             
-            errorEl.textContent = "";
-            
-            // 使用移动端优化URL（关键修改点）
-            const mobileUrl = `https://script.googleusercontent.com/macros/echo?user_content_key=AKfycbxbpZ3JTJmHkE6Oh-np2eRcVlLZKZkhyw0-xLVb3o0elE7sBW1S5EYEj2BleIqxC8_q&id=${guestId}`;
-            
-            // 新窗口打开避免被拦截
-            window.open(mobileUrl, '_blank');
+            try {
+                // 显示加载状态
+                checkinBtn.disabled = true;
+                spinner.style.display = 'block';
+                errorMsg.classList.add('d-none');
+                
+                // 实际使用中替换为真实API调用
+                const result = await verifyCheckIn(guestId);
+                
+                // 显示结果
+                showResult(result);
+                
+            } catch (error) {
+                showError(`核销失败: ${error.message}`);
+            } finally {
+                checkinBtn.disabled = false;
+                spinner.style.display = 'none';
+            }
         }
+        
+        // 模拟验证函数（实际使用时替换）
+        async function verifyCheckIn(guestId) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve({
+                        success: true,
+                        guestName: "张三",
+                        institution: "示例公司",
+                        time: new Date().toLocaleTimeString('zh-CN')
+                    });
+                }, 1500);
+            });
+        }
+        
+        // 显示错误信息
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.classList.remove('d-none');
+            resultCard.style.display = 'none';
+        }
+        
+        // 显示核销结果
+        function showResult(result) {
+            resultCard.style.display = 'block';
+            
+            if (result.success) {
+                resultContent.className = 'result-section success-bg p-4';
+                resultContent.innerHTML = `
+                    <h2 class="text-success mb-4"><i class="fas fa-check-circle me-2"></i>签到成功!</h2>
+                    <div class="result-details">
+                        <p><strong>姓名:</strong> ${result.guestName}</p>
+                        ${result.institution ? `<p><strong>机构:</strong> ${result.institution}</p>` : ''}
+                        <p><strong>签到时间:</strong> ${result.time}</p>
+                    </div>
+                    <button class="btn btn-outline-success mt-3" onclick="resetForm()">
+                        <i class="fas fa-redo me-2"></i>继续核销
+                    </button>
+                `;
+            } else {
+                resultContent.className = 'result-section error-bg p-4';
+                resultContent.innerHTML = `
+                    <h2 class="text-danger mb-4"><i class="fas fa-times-circle me-2"></i>${result.message}</h2>
+                    ${result.time ? `<p>首次签到时间: ${result.time}</p>` : ''}
+                    <button class="btn btn-outline-danger mt-3" onclick="resetForm()">
+                        <i class="fas fa-redo me-2"></i>重新尝试
+                    </button>
+                `;
+            }
+        }
+        
+        // 重置表单
+        function resetForm() {
+            guestIdInput.value = '';
+            resultCard.style.display = 'none';
+            errorMsg.classList.add('d-none');
+            guestIdInput.focus();
+        }
+        
+        // 绑定事件
+        checkinBtn.addEventListener('click', checkIn);
+        guestIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkIn();
+        });
+        
+        // 初始化
+        resetForm();
     </script>
 </body>
 </html>
