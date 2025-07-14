@@ -460,7 +460,7 @@
         const manualBtn = document.getElementById('manualBtn');
         const manualSection = document.getElementById('manualSection');
         const manualCheckBtn = document.getElementById('manualCheckBtn');
-        const guestIdInput = document.getElementById('guestId');
+        const uniqueIdInput = document.getElementById('uniqueId');
         const loadingElement = document.getElementById('loading');
         const resultSuccess = document.getElementById('resultSuccess');
         const resultError = document.getElementById('resultError');
@@ -662,7 +662,7 @@
         }
         
         // 处理核销
-        async function processCheckIn(guestId) {
+        async function processCheckIn(uniqueId) {
             // 停止扫描
             stopScanning();
             
@@ -673,7 +673,7 @@
             
             try {
                 // 调用Google Script API
-                const response = await fetch(`${API_URL}?id=${encodeURIComponent(guestId)}`);
+                const response = await fetch(`${API_URL}?id=${encodeURIComponent(uniqueId)}`);
                 const result = await response.json();
                 
                 if (result.status === "success") {
