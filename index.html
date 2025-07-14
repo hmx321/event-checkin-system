@@ -412,7 +412,7 @@
                 
                 <div class="manual-section" id="manualSection">
                     <h3><i class="fas fa-pencil-alt"></i> 手动核销</h3>
-                    <input type="text" id="guestId" placeholder="输入嘉宾核销码 (如: EV-ABC123)">
+                    <input type="text" id="uniqueId" placeholder="输入嘉宾核销码 (如: EV-ABC123)">
                     <button class="btn" id="manualCheckBtn">
                         <i class="fas fa-check-circle"></i> 提交核销
                     </button>
@@ -679,9 +679,9 @@
                 if (result.status === "success") {
                     // 显示成功结果
                     successDetails.innerHTML = `
-                        <p><strong>核销码:</strong> ${UniqueId}</p>
-                        <p><strong>姓名:</strong> ${result.Fullame}</p>
-                        <p><strong>机构:</strong> ${result.Institution || '未提供'}</p>
+                        <p><strong>核销码:</strong> ${uniqueId}</p>
+                        <p><strong>姓名:</strong> ${result.fullame}</p>
+                        <p><strong>机构:</strong> ${result.institution || '未提供'}</p>
                         <p><strong>核销时间:</strong> ${new Date().toLocaleString()}</p>
                     `;
                     resultSuccess.style.display = 'block';
@@ -700,8 +700,8 @@
         
         // 手动核销
         function manualCheckIn() {
-            const UniqueId = UniqueIdInput.value.trim();
-            if (!UniqueId) {
+            const uniqueId = uniqueIdInput.value.trim();
+            if (!uniqueId) {
                 alert("请输入核销码");
                 return;
             }
@@ -713,7 +713,7 @@
         function toggleManualInput() {
             if (scanning) stopScanning();
             manualSection.style.display = 'block';
-            UniqueIdInput.focus();
+            uniqueIdInput.focus();
         }
         
         // 切换全屏模式
